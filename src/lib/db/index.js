@@ -17,3 +17,4 @@ export {
   isValidDatabaseSchema,
   getDatabaseSyncError,
 } from "./validate.js";
+export { isServerlessRuntime, getBundledDbFilePath } from "./paths.js";

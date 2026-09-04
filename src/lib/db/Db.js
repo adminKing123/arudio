@@ -1,7 +1,6 @@
 import { JSONFilePreset } from "lowdb/node";
-import fs from "fs";
-import path from "path";
 import { emptyDatabase, TABLE_NAMES } from "./schema.js";
+import { ensureDbDirectory, getDbFilePath } from "./paths.js";
 import { SongRepository } from "./models/Song.js";
 import { ArtistRepository } from "./models/Artist.js";
 import { AlbumRepository } from "./models/Album.js";
@@ -42,11 +41,11 @@ export class Db {
   }
 
   static getFilePath() {
-    return path.join(process.cwd(), "data", "db.json");
+    return getDbFilePath();
   }
 
   static ensureDataDirectory() {
-    fs.mkdirSync(path.dirname(Db.getFilePath()), { recursive: true });
+    ensureDbDirectory();
   }
 
   async connect() {

@@ -1,12 +1,14 @@
 import fs from "fs";
-import path from "path";
 import { emptyDatabase, TABLE_NAMES } from "./schema.js";
-
-export function getDbFilePath() {
-  return path.join(process.cwd(), "data", "db.json");
-}
+import {
+  ensureDbDirectory,
+  getBundledDbFilePath,
+  getDbFilePath,
+  isServerlessRuntime,
+} from "./paths.js";
 
 function writeValidDatabase(filePath) {
+  ensureDbDirectory(filePath);
   fs.writeFileSync(filePath, `${JSON.stringify(emptyDatabase, null, 2)}\n`, "utf-8");
 }
 
@@ -24,13 +26,49 @@ export function isValidDatabaseSchema(data) {
   );
 }
 
+function seedFromBundledDatabase(filePath) {
+  const bundledPath = getBundledDbFilePath();
+
+  if (!fs.existsSync(bundledPath)) {
+    return false;
+  }
+
+  try {
+    const raw = fs.readFileSync(bundledPath, "utf-8").trim();
+
+    if (!raw) {
+      return false;
+    }
+
+    const data = JSON.parse(raw);
+
+    if (!isValidDatabaseSchema(data)) {
+      return false;
+    }
+
+    ensureDbDirectory(filePath);
+    fs.copyFileSync(bundledPath, filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /**
- * @returns {{ valid: boolean, reason?: string, created?: boolean, repaired?: boolean }}
+ * @returns {{ valid: boolean, reason?: string, created?: boolean, repaired?: boolean, seeded?: boolean }}
  */
 export function initializeDatabase() {
   const filePath = getDbFilePath();
 
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  ensureDbDirectory(filePath);
+
+  if (!fs.existsSync(filePath) && isServerlessRuntime() && seedFromBundledDatabase(filePath)) {
+    return {
+      valid: true,
+      created: true,
+      seeded: true,
+    };
+  }
 
   if (!fs.existsSync(filePath)) {
     writeValidDatabase(filePath);
@@ -79,5 +117,7 @@ export function initializeDatabase() {
  * @returns {string}
  */
 export function getDatabaseSyncError() {
-  return `Database is not ready for sync. Ensure data/db.json exists with tables: ${TABLE_NAMES.join(", ")}.`;
+  return `Database is not ready for sync. Ensure the database file exists with tables: ${TABLE_NAMES.join(", ")}.`;
 }
+
+export { getDbFilePath } from "./paths.js";
