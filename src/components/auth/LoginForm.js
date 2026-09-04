@@ -7,6 +7,7 @@ import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Message } from "@/components/ui/Message";
+import { AuthFooter } from "@/components/ui/AuthFooter";
 import { postJson } from "@/lib/api/client";
 
 export function LoginForm() {
@@ -64,13 +65,11 @@ export function LoginForm() {
         </Button>
         <Message text={error} type="error" />
       </form>
-      <div className="neo-divider" role="separator" aria-hidden="true" />
-      <p className="text-center text-sm text-[var(--text-muted)]">
-        Don&apos;t have an account?{" "}
-        <a href="/signup" className="neo-link">
-          Create account
-        </a>
-      </p>
+      <AuthFooter
+        prompt="Don't have an account?"
+        linkHref="/signup"
+        linkLabel="Create account"
+      />
     </AuthPage>
   );
 }

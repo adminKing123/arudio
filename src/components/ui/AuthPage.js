@@ -1,3 +1,5 @@
+"use client";
+
 import { Logo } from "@/components/ui/Logo";
 
 /** @param {{ children: import("react").ReactNode }} props */
@@ -9,12 +11,12 @@ export function AuthShell({ children }) {
   );
 }
 
-/** @param {{ title: string, description: string, children: import("react").ReactNode }} props */
-export function AuthPage({ title, description, children }) {
+/** @param {{ title: string, description: string, headerRef?: import("react").RefObject<HTMLElement | null>, children: import("react").ReactNode }} props */
+export function AuthPage({ title, description, headerRef, children }) {
   return (
     <AuthShell>
       <div className="neo-card p-8">
-        <div className="mb-8 text-center">
+        <div ref={headerRef} className="mb-8 text-center">
           <Logo className="mx-auto mb-4" priority />
           <h1 className="font-display text-2xl font-bold tracking-tight text-[var(--text)]">
             {title}
