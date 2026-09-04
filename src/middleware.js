@@ -23,7 +23,7 @@ export async function middleware(request) {
     return NextResponse.next();
   }
 
-  if (pathname.startsWith("/profile")) {
+  if (pathname === "/" || pathname.startsWith("/profile")) {
     const token = request.cookies.get(SESSION_COOKIE)?.value;
     const session = await verifySessionToken(token);
 
@@ -36,5 +36,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/api/sync", "/profile"],
+  matcher: ["/api/sync", "/", "/profile"],
 };

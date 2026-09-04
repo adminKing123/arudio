@@ -1,19 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { useLogout } from "@/hooks/useLogout";
 
 export function LogoutButton() {
-  const router = useRouter();
-
-  async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
-    router.refresh();
-  }
+  const logout = useLogout();
 
   return (
-    <Button type="button" variant="soft" onClick={handleLogout}>
+    <Button type="button" variant="soft" onClick={logout}>
       Logout
     </Button>
   );
