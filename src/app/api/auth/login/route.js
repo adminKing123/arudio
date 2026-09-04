@@ -5,35 +5,73 @@ import {
   createSessionToken,
   setSessionCookie,
 } from "@/lib/auth/session";
-import { isValidEmail, normalizeEmail } from "@/lib/auth/validation";
+import { isValidEmail, normalizeEmail, normalizeUsername } from "@/lib/auth/validation";
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    const email = normalizeEmail(body.email || "");
+    const loginWith = body.loginWith === "email" ? "email" : "username";
     const password = body.password || "";
+    const identifier = String(body.identifier || "").trim();
 
-    if (!isValidEmail(email) || !password) {
-      return NextResponse.json({ error: "Email and password are required." }, { status: 400 });
+    if (!identifier || !password) {
+      return NextResponse.json(
+        {
+          error:
+            loginWith === "email"
+              ? "Email and password are required."
+              : "Username and password are required.",
+        },
+        { status: 400 },
+      );
     }
 
-    const user = await db.user.findByEmail(email);
+    let user;
+
+    if (loginWith === "email") {
+      const email = normalizeEmail(identifier);
+
+      if (!isValidEmail(email)) {
+        return NextResponse.json({ error: "Email and password are required." }, { status: 400 });
+      }
+
+      user = await db.user.findByEmail(email);
+    } else {
+      const username = normalizeUsername(identifier);
+      user = await db.user.findByUsername(username);
+    }
 
     if (!user) {
-      return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
+      return NextResponse.json(
+        {
+          error:
+            loginWith === "email"
+              ? "Invalid email or password."
+              : "Invalid username or password.",
+        },
+        { status: 401 },
+      );
     }
 
     const validPassword = await verifyPassword(password, user.passwordHash);
 
     if (!validPassword) {
-      return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
+      return NextResponse.json(
+        {
+          error:
+            loginWith === "email"
+              ? "Invalid email or password."
+              : "Invalid username or password.",
+        },
+        { status: 401 },
+      );
     }
 
     if (!user.verified) {
       return NextResponse.json(
         {
           error: "Email not verified.",
-          redirectTo: `/verify-otp?email=${encodeURIComponent(email)}&type=signup`,
+          redirectTo: `/verify-otp?email=${encodeURIComponent(user.email)}&type=signup`,
         },
         { status: 403 },
       );

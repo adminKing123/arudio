@@ -8,12 +8,26 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Message } from "@/components/ui/Message";
 import { AuthFooter } from "@/components/ui/AuthFooter";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { postJson } from "@/lib/api/client";
+
+/** @typedef {"username" | "email"} LoginMethod */
+
+const LOGIN_METHOD_OPTIONS = [
+  { value: "username", label: "Username" },
+  { value: "email", label: "Email" },
+];
 
 export function LoginForm() {
   const router = useRouter();
+  const [loginWith, setLoginWith] = useState(/** @type {LoginMethod} */ ("username"));
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  function handleLoginMethodChange(method) {
+    setLoginWith(/** @type {LoginMethod} */ (method));
+    setError("");
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -24,7 +38,8 @@ export function LoginForm() {
 
     try {
       const { ok, data } = await postJson("/api/auth/login", {
-        email: formData.get("email"),
+        loginWith,
+        identifier: formData.get("identifier"),
         password: formData.get("password"),
       });
 
@@ -49,8 +64,26 @@ export function LoginForm() {
   return (
     <AuthPage title="Welcome back" description="Sign in to your Arudio account.">
       <form onSubmit={handleSubmit}>
-        <FormField label="Email" htmlFor="email">
-          <Input id="email" name="email" type="email" required autoComplete="email" />
+        <SegmentedControl
+          className="mb-5"
+          aria-label="Login method"
+          options={LOGIN_METHOD_OPTIONS}
+          value={loginWith}
+          onChange={handleLoginMethodChange}
+        />
+
+        <FormField
+          label={loginWith === "username" ? "Username" : "Email"}
+          htmlFor="identifier"
+        >
+          <Input
+            id="identifier"
+            name="identifier"
+            type={loginWith === "username" ? "text" : "email"}
+            required
+            autoComplete={loginWith === "username" ? "username" : "email"}
+            key={loginWith}
+          />
         </FormField>
         <FormField label="Password" htmlFor="password">
           <Input id="password" name="password" type="password" required autoComplete="current-password" />
