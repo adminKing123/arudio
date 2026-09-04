@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { VerifyOtpForm } from "@/components/auth/VerifyOtpForm";
 
 export const metadata = {
-  title: "Verify OTP | Arudio",
+  title: "Verify OTP",
   description: "Verify your 6-digit OTP code for Arudio signup or password reset.",
 };
 

@@ -1,7 +1,7 @@
 import { LoginForm } from "@/components/auth/LoginForm";
 
 export const metadata = {
-  title: "Login | Arudio",
+  title: "Login",
   description: "Login to your Arudio account with email and password.",
 };
 

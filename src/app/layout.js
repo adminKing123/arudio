@@ -20,8 +20,16 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata = {
-  title: "Arudio",
+  title: {
+    default: "Arudio",
+    template: "%s | Arudio",
+  },
   description: "Music streaming and discovery platform.",
+  icons: {
+    icon: "/logo.svg",
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
+  },
 };
 
 export default function RootLayout({ children }) {

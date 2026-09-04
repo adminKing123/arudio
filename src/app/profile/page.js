@@ -7,7 +7,7 @@ import { InfoRow, PageSection } from "@/components/layout/PageSection";
 import { SoftCardSm } from "@/components/ui/SoftCard";
 
 export const metadata = {
-  title: "Profile | Arudio",
+  title: "Profile",
   description: "View and manage your Arudio profile.",
 };
 
