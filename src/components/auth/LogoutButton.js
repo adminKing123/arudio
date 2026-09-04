@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { SubmitButton } from "@/components/ui/SubmitButton";
+import { Button } from "@/components/ui/Button";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -12,5 +12,9 @@ export function LogoutButton() {
     router.refresh();
   }
 
-  return <SubmitButton label="Logout" onClick={handleLogout} type="button" />;
+  return (
+    <Button type="button" variant="soft" onClick={handleLogout}>
+      Logout
+    </Button>
+  );
 }

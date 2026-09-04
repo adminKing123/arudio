@@ -4,26 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthPage } from "@/components/ui/AuthPage";
 import { FormField } from "@/components/ui/FormField";
-import { TextInput } from "@/components/ui/TextInput";
-import { SubmitButton } from "@/components/ui/SubmitButton";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 import { Message } from "@/components/ui/Message";
 import { AuthLinks } from "@/components/ui/AuthLinks";
-
-async function postJson(url, body) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error || "Request failed.");
-  }
-
-  return data;
-}
+import { postJson } from "@/lib/api/client";
 
 /** @param {{ email: string, type: "signup" | "password_reset" }} props */
 export function VerifyOtpForm({ email, type }) {
@@ -42,11 +27,16 @@ export function VerifyOtpForm({ email, type }) {
     const formData = new FormData(event.currentTarget);
 
     try {
-      const data = await postJson("/api/auth/verify-otp", {
+      const { ok, data } = await postJson("/api/auth/verify-otp", {
         email,
         code: formData.get("code"),
         type,
       });
+
+      if (!ok) {
+        throw new Error(data.error || "Verification failed.");
+      }
+
       router.push(data.redirectTo || "/profile");
       router.refresh();
     } catch (requestError) {
@@ -62,7 +52,12 @@ export function VerifyOtpForm({ email, type }) {
     setResending(true);
 
     try {
-      const data = await postJson("/api/auth/resend-otp", { email, type });
+      const { ok, data } = await postJson("/api/auth/resend-otp", { email, type });
+
+      if (!ok) {
+        throw new Error(data.error || "Failed to resend OTP.");
+      }
+
       setSuccess(data.message);
     } catch (requestError) {
       setError(requestError.message);
@@ -78,7 +73,7 @@ export function VerifyOtpForm({ email, type }) {
     >
       <form onSubmit={handleSubmit}>
         <FormField label="6-digit OTP" htmlFor="code">
-          <TextInput
+          <Input
             id="code"
             name="code"
             type="text"
@@ -87,17 +82,20 @@ export function VerifyOtpForm({ email, type }) {
             maxLength={6}
             required
             autoComplete="one-time-code"
+            className="text-center text-lg tracking-[0.5em]"
           />
         </FormField>
-        <SubmitButton label={loading ? "Verifying..." : "Verify OTP"} disabled={loading} />
+        <Button type="submit" disabled={loading}>
+          {loading ? "Verifying..." : "Verify OTP"}
+        </Button>
         <Message text={error} type="error" />
         <Message text={success} type="success" />
       </form>
-      <p>
-        <button type="button" onClick={handleResend} disabled={resending}>
+      <div className="mt-4 text-center">
+        <Button type="button" variant="ghost" onClick={handleResend} disabled={resending}>
           {resending ? "Sending..." : "Resend OTP"}
-        </button>
-      </p>
+        </Button>
+      </div>
       <AuthLinks
         links={[
           type === "signup"

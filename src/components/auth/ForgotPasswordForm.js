@@ -4,26 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthPage } from "@/components/ui/AuthPage";
 import { FormField } from "@/components/ui/FormField";
-import { TextInput } from "@/components/ui/TextInput";
-import { SubmitButton } from "@/components/ui/SubmitButton";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 import { Message } from "@/components/ui/Message";
 import { AuthLinks } from "@/components/ui/AuthLinks";
-
-async function postJson(url, body) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error || "Request failed.");
-  }
-
-  return data;
-}
+import { postJson } from "@/lib/api/client";
 
 export function ForgotPasswordForm() {
   const router = useRouter();
@@ -39,7 +24,12 @@ export function ForgotPasswordForm() {
     const email = formData.get("email");
 
     try {
-      await postJson("/api/auth/forgot-password", { email });
+      const { ok, data } = await postJson("/api/auth/forgot-password", { email });
+
+      if (!ok) {
+        throw new Error(data.error || "Failed to send OTP.");
+      }
+
       router.push(
         `/verify-otp?email=${encodeURIComponent(String(email))}&type=password_reset`,
       );
@@ -54,9 +44,11 @@ export function ForgotPasswordForm() {
     <AuthPage title="Forgot password" description="We will email you a 6-digit OTP to reset your password.">
       <form onSubmit={handleSubmit}>
         <FormField label="Email" htmlFor="email">
-          <TextInput id="email" name="email" type="email" required autoComplete="email" />
+          <Input id="email" name="email" type="email" required autoComplete="email" />
         </FormField>
-        <SubmitButton label={loading ? "Sending OTP..." : "Send OTP"} disabled={loading} />
+        <Button type="submit" disabled={loading}>
+          {loading ? "Sending OTP..." : "Send OTP"}
+        </Button>
         <Message text={error} type="error" />
       </form>
       <AuthLinks links={[{ href: "/login", label: "Back to login" }]} />

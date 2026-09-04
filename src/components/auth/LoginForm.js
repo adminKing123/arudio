@@ -4,26 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthPage } from "@/components/ui/AuthPage";
 import { FormField } from "@/components/ui/FormField";
-import { TextInput } from "@/components/ui/TextInput";
-import { SubmitButton } from "@/components/ui/SubmitButton";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 import { Message } from "@/components/ui/Message";
 import { AuthLinks } from "@/components/ui/AuthLinks";
-
-async function postJson(url, body) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error || "Request failed.");
-  }
-
-  return data;
-}
+import { postJson } from "@/lib/api/client";
 
 export function LoginForm() {
   const router = useRouter();
@@ -38,18 +23,12 @@ export function LoginForm() {
     const formData = new FormData(event.currentTarget);
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formData.get("email"),
-          password: formData.get("password"),
-        }),
+      const { ok, data } = await postJson("/api/auth/login", {
+        email: formData.get("email"),
+        password: formData.get("password"),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
+      if (!ok) {
         if (data.redirectTo) {
           router.push(data.redirectTo);
           return;
@@ -68,15 +47,17 @@ export function LoginForm() {
   }
 
   return (
-    <AuthPage title="Login" description="Sign in to your Arudio account.">
+    <AuthPage title="Welcome back" description="Sign in to your Arudio account.">
       <form onSubmit={handleSubmit}>
         <FormField label="Email" htmlFor="email">
-          <TextInput id="email" name="email" type="email" required autoComplete="email" />
+          <Input id="email" name="email" type="email" required autoComplete="email" />
         </FormField>
         <FormField label="Password" htmlFor="password">
-          <TextInput id="password" name="password" type="password" required autoComplete="current-password" />
+          <Input id="password" name="password" type="password" required autoComplete="current-password" />
         </FormField>
-        <SubmitButton label={loading ? "Logging in..." : "Login"} disabled={loading} />
+        <Button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </Button>
         <Message text={error} type="error" />
       </form>
       <AuthLinks
