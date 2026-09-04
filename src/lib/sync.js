@@ -1,5 +1,5 @@
 import { TABLE_NAMES, emptyDatabase } from "./db/schema.js";
-import { db } from "./db/index.js";
+import { db, getDatabaseState, getDatabaseSyncError } from "./db/index.js";
 
 /**
  * @param {unknown} payload
@@ -27,6 +27,14 @@ function normalizeRemotePayload(payload) {
 }
 
 export async function syncDatabaseFromRemote() {
+  const databaseState = getDatabaseState();
+
+  if (!databaseState.valid) {
+    throw new Error(
+      databaseState.reason ?? getDatabaseSyncError(),
+    );
+  }
+
   const remoteUrl = process.env.REMOTE_DB_JSON_URL;
 
   if (!remoteUrl) {
