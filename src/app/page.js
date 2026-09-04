@@ -1,10 +1,13 @@
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
-import { DashboardPageHeader } from "@/components/layout/dashboard/DashboardPageHeader";
+import { RecommendationSection } from "@/components/dashboard/RecommendationSection";
+import { getRandomRecommendations } from "@/lib/recommendations";
 
-export default function Home() {
+export default async function Home() {
+  const recommendations = await getRandomRecommendations(16);
+
   return (
     <DashboardLayout>
-      <DashboardPageHeader title="Dashboard" />
+      <RecommendationSection items={recommendations} />
     </DashboardLayout>
   );
 }

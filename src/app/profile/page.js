@@ -29,7 +29,7 @@ export default async function ProfilePage() {
   return (
     <DashboardLayout>
       <DashboardPageHeader title="Profile" />
-      <SoftCardSm>
+      <SoftCardSm className="dashboard-block-inset-x">
         <dl>
           <InfoRow label="Name" value={profile.name} />
           <InfoRow label="Username" value={`@${profile.username}`} />

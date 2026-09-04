@@ -42,6 +42,7 @@
   --dashboard-top: 0.75rem;
   --dashboard-header-height: 2.5rem;
   --dashboard-content-x: 1.125rem;
+  --dashboard-content-x-right: 1.5rem;
   --header-search-bg: #e8eaef;
   --header-search-bg-focus: #e3e6ec;
   --header-icon-bg: #e8eaef;
@@ -54,6 +55,8 @@
   --header-elevated-shadow-hover:
     5px 5px 12px var(--shadow-dark),
     -4px -4px 10px var(--shadow-light);
+  --recommendation-card-width: 10.5rem;
+  --recommendation-disc-size: 10.5rem;
 }
 
 @theme inline {
@@ -609,12 +612,13 @@ h3 {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: var(--dashboard-top) 1.5rem 0.75rem var(--dashboard-content-x);
+    padding: var(--dashboard-top) 0 0.75rem;
   }
 
   .dashboard-header-search {
     flex: 1;
     max-width: 28rem;
+    padding-left: var(--dashboard-content-x);
   }
 
   .dashboard-header-actions {
@@ -623,6 +627,7 @@ h3 {
     gap: 0.625rem;
     margin-left: auto;
     flex-shrink: 0;
+    padding-right: var(--dashboard-content-x-right);
   }
 
   .search-bar {
@@ -737,7 +742,7 @@ h3 {
   }
 
   .dashboard-main-content {
-    padding: 0.75rem 1.5rem 1.5rem var(--dashboard-content-x);
+    padding: 0.75rem 0 1.5rem;
   }
 
   .dashboard-page-header {
@@ -745,9 +750,172 @@ h3 {
     align-items: center;
     min-height: var(--dashboard-header-height);
     margin-bottom: 0.625rem;
+    padding-inline: var(--dashboard-content-x) var(--dashboard-content-x-right);
+  }
+
+  .dashboard-inset-left {
+    padding-left: var(--dashboard-content-x);
+  }
+
+  .dashboard-inset-right {
+    padding-right: var(--dashboard-content-x-right);
+  }
+
+  .dashboard-block-inset-left {
+    margin-left: var(--dashboard-content-x);
+  }
+
+  .dashboard-block-inset-right {
+    margin-right: var(--dashboard-content-x-right);
+  }
+
+  .dashboard-block-inset-x {
+    margin-left: var(--dashboard-content-x);
+    margin-right: var(--dashboard-content-x-right);
   }
 
   .dashboard-page-title {
     white-space: nowrap;
+  }
+
+  .recommendation-section {
+    margin-top: 0.5rem;
+  }
+
+  .recommendation-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-inline: var(--dashboard-content-x) var(--dashboard-content-x-right);
+  }
+
+  .recommendation-section-title {
+    margin: 0;
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .recommendation-section-link {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .recommendation-section-link:hover {
+    color: var(--text);
+  }
+
+  .recommendation-scroll-wrap {
+    position: relative;
+  }
+
+  .recommendation-scroll-wrap::before,
+  .recommendation-scroll-wrap::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0.75rem;
+    width: 3.5rem;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .recommendation-scroll-wrap-fade-left::before {
+    opacity: 1;
+  }
+
+  .recommendation-scroll-wrap-fade-right::after {
+    opacity: 1;
+  }
+
+  .recommendation-scroll-wrap::before {
+    left: 0;
+    background: linear-gradient(to right, var(--bg) 15%, transparent 100%);
+  }
+
+  .recommendation-scroll-wrap::after {
+    right: 0;
+    background: linear-gradient(to left, var(--bg) 15%, transparent 100%);
+  }
+
+  .recommendation-scroll {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 0.75rem;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .recommendation-scroll-track {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .recommendation-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .recommendation-card {
+    flex: 0 0 auto;
+    width: var(--recommendation-card-width);
+    text-align: center;
+  }
+
+  .recommendation-disc {
+    position: relative;
+    width: var(--recommendation-disc-size);
+    height: var(--recommendation-disc-size);
+    margin: 0 auto 1rem;
+    border-radius: 50%;
+    border: 2px solid #1f2937;
+    overflow: hidden;
+    background: var(--card);
+  }
+
+  .recommendation-disc-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .recommendation-disc-fallback {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #d1d5db, #9ca3af);
+  }
+
+  .recommendation-card-meta {
+    min-width: 0;
+  }
+
+  .recommendation-card-title {
+    margin: 0 0 0.375rem;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .recommendation-card-artist {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
