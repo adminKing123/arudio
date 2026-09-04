@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { HiChevronLeft } from "react-icons/hi2";
 import { DASHBOARD_NAV_ITEMS } from "@/lib/navigation/dashboard";
@@ -8,8 +8,11 @@ import { SidebarBrand } from "@/components/layout/dashboard/SidebarBrand";
 import { SidebarDivider } from "@/components/layout/dashboard/SidebarDivider";
 import { SidebarNavItem } from "@/components/layout/dashboard/SidebarNavItem";
 import { SidebarLogout } from "@/components/layout/dashboard/SidebarLogout";
-
-const STORAGE_KEY = "arudio-sidebar-collapsed";
+import {
+  readSidebarCollapsedFromStorage,
+  setSidebarCollapsedPreference,
+  syncSidebarCollapsedCookie,
+} from "@/lib/sidebar-preference";
 
 function isActivePath(pathname, href) {
   if (href === "/") {
@@ -33,31 +36,37 @@ function SidebarCollapseButton({ onCollapse }) {
   );
 }
 
-export function Sidebar() {
+/** @param {{ defaultCollapsed?: boolean }} props */
+export function Sidebar({ defaultCollapsed = false }) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
-  const [ready, setReady] = useState(false);
+  const [collapsed, setCollapsed] = useState(defaultCollapsed);
 
-  useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    setCollapsed(stored === "true");
-    setReady(true);
-  }, []);
+  useLayoutEffect(() => {
+    const stored = readSidebarCollapsedFromStorage();
+
+    if (stored === null) {
+      syncSidebarCollapsedCookie(defaultCollapsed);
+      return;
+    }
+
+    if (stored !== defaultCollapsed) {
+      syncSidebarCollapsedCookie(stored);
+      setCollapsed(stored);
+    }
+  }, [defaultCollapsed]);
 
   function handleCollapse() {
     setCollapsed(true);
-    window.localStorage.setItem(STORAGE_KEY, "true");
+    setSidebarCollapsedPreference(true);
   }
 
   function handleExpand() {
     setCollapsed(false);
-    window.localStorage.setItem(STORAGE_KEY, "false");
+    setSidebarCollapsedPreference(false);
   }
 
   return (
-    <aside
-      className={`sidebar ${collapsed ? "sidebar-collapsed" : ""} ${ready ? "sidebar-ready" : ""}`.trim()}
-    >
+    <aside className={`sidebar sidebar-ready ${collapsed ? "sidebar-collapsed" : ""}`.trim()}>
       <div className="sidebar-header">
         <SidebarBrand collapsed={collapsed} onExpand={handleExpand} />
         {!collapsed ? <SidebarCollapseButton onCollapse={handleCollapse} /> : null}

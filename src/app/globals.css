@@ -42,6 +42,18 @@
   --dashboard-top: 0.75rem;
   --dashboard-header-height: 2.5rem;
   --dashboard-content-x: 1.125rem;
+  --header-search-bg: #e8eaef;
+  --header-search-bg-focus: #e3e6ec;
+  --header-icon-bg: #e8eaef;
+  --header-icon-bg-hover: #dfe3ea;
+  --header-icon-color: #4b5563;
+  --header-muted: #9ca3af;
+  --header-elevated-shadow:
+    4px 4px 10px var(--shadow-dark),
+    -3px -3px 8px var(--shadow-light);
+  --header-elevated-shadow-hover:
+    5px 5px 12px var(--shadow-dark),
+    -4px -4px 10px var(--shadow-light);
 }
 
 @theme inline {
@@ -351,8 +363,7 @@ h3 {
     width: var(--sidebar-width);
     min-height: 100vh;
     padding: var(--dashboard-top) var(--sidebar-padding-x);
-    background: var(--sidebar-bg);
-    border-right: 1px solid var(--sidebar-border);
+    background: linear-gradient(to right, var(--sidebar-bg), transparent);
     transition: width 0.25s ease, padding 0.25s ease;
   }
 
@@ -593,8 +604,140 @@ h3 {
     background: transparent;
   }
 
+  .dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: var(--dashboard-top) 1.5rem 0.75rem var(--dashboard-content-x);
+  }
+
+  .dashboard-header-search {
+    flex: 1;
+    max-width: 28rem;
+  }
+
+  .dashboard-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-pill);
+    background: var(--header-search-bg);
+    border: 1px solid transparent;
+    cursor: text;
+    box-shadow: var(--header-elevated-shadow);
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .search-bar:focus-within {
+    background: var(--header-search-bg-focus);
+    border-color: color-mix(in srgb, var(--shadow-dark) 12%, transparent);
+    box-shadow: var(--header-elevated-shadow-hover);
+  }
+
+  .search-bar-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    color: var(--header-muted);
+  }
+
+  .search-bar-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .search-bar-input::placeholder {
+    color: var(--header-muted);
+  }
+
+  .header-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    color: var(--header-icon-color);
+    background: var(--header-icon-bg);
+    box-shadow: var(--header-elevated-shadow);
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .header-icon-btn:hover {
+    color: var(--text);
+    background: var(--header-icon-bg-hover);
+    box-shadow: var(--header-elevated-shadow-hover);
+  }
+
+  .header-icon-btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .dashboard-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.375rem 0.75rem 0.375rem 0.375rem;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    color: var(--text);
+    background: var(--header-icon-bg);
+    box-shadow: var(--header-elevated-shadow);
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+    max-width: 14rem;
+  }
+
+  .dashboard-profile:hover {
+    background: var(--header-icon-bg-hover);
+    box-shadow: var(--header-elevated-shadow-hover);
+  }
+
+  .dashboard-profile-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.125rem;
+    height: 2.125rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, var(--accent), #f0926e);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .dashboard-profile-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
   .dashboard-main-content {
-    padding: var(--dashboard-top) 1.5rem 1.5rem var(--dashboard-content-x);
+    padding: 0.75rem 1.5rem 1.5rem var(--dashboard-content-x);
   }
 
   .dashboard-page-header {
