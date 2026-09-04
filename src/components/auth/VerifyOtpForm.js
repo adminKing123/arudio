@@ -82,18 +82,18 @@ export function VerifyOtpForm({ email, type }) {
             maxLength={6}
             required
             autoComplete="one-time-code"
-            className="text-center text-lg tracking-[0.5em]"
+            className="font-mono text-center text-lg tracking-[0.5em]"
           />
         </FormField>
-        <Button type="submit" disabled={loading}>
-          {loading ? "Verifying..." : "Verify OTP"}
+        <Button type="submit" loading={loading}>
+          Verify OTP
         </Button>
         <Message text={error} type="error" />
         <Message text={success} type="success" />
       </form>
       <div className="mt-4 text-center">
-        <Button type="button" variant="ghost" onClick={handleResend} disabled={resending}>
-          {resending ? "Sending..." : "Resend OTP"}
+        <Button type="button" variant="ghost" loading={resending} onClick={handleResend}>
+          Resend OTP
         </Button>
       </div>
       <AuthLinks

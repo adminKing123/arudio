@@ -3,7 +3,7 @@ export function PageSection({ title, action, children }) {
   return (
     <section className="mb-8">
       <div className="mb-4 flex items-center justify-between gap-4">
-        <h2 className="text-xl font-bold text-[var(--text)]">{title}</h2>
+        <h2 className="font-display text-xl font-bold text-[var(--text)]">{title}</h2>
         {action}
       </div>
       {children}

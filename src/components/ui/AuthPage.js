@@ -16,7 +16,7 @@ export function AuthPage({ title, description, children }) {
       <div className="neo-card p-8">
         <div className="mb-8 text-center">
           <Logo className="mx-auto mb-4" priority />
-          <h1 className="text-2xl font-bold tracking-tight text-[var(--text)]">
+          <h1 className="font-display text-2xl font-bold tracking-tight text-[var(--text)]">
             {title}
           </h1>
           <p className="mt-2 text-sm text-[var(--text-muted)]">{description}</p>

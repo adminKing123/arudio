@@ -1,8 +1,12 @@
-/** @param {{ variant?: "primary" | "soft" | "ghost", className?: string, children: import("react").ReactNode } & import("react").ButtonHTMLAttributes<HTMLButtonElement>} props */
+import { Spinner } from "@/components/ui/Spinner";
+
+/** @param {{ variant?: "primary" | "soft" | "ghost", className?: string, loading?: boolean, children: import("react").ReactNode } & import("react").ButtonHTMLAttributes<HTMLButtonElement>} props */
 export function Button({
   variant = "primary",
   className = "",
+  loading = false,
   children,
+  disabled,
   ...props
 }) {
   const variantClass =
@@ -13,8 +17,13 @@ export function Button({
         : "neo-btn neo-btn-soft w-full";
 
   return (
-    <button className={`${variantClass} ${className}`.trim()} {...props}>
-      {children}
+    <button
+      className={`${variantClass} ${className}`.trim()}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      {...props}
+    >
+      {loading ? <Spinner label="Loading" /> : children}
     </button>
   );
 }

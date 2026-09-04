@@ -7,7 +7,6 @@ import { FormField } from "@/components/ui/FormField";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Message } from "@/components/ui/Message";
-import { AuthLinks } from "@/components/ui/AuthLinks";
 import { postJson } from "@/lib/api/client";
 
 export function LoginForm() {
@@ -54,18 +53,24 @@ export function LoginForm() {
         </FormField>
         <FormField label="Password" htmlFor="password">
           <Input id="password" name="password" type="password" required autoComplete="current-password" />
+          <div className="mt-2 flex justify-end">
+            <a href="/forgot-password" className="neo-link text-sm">
+              Forgot password?
+            </a>
+          </div>
         </FormField>
-        <Button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
+        <Button type="submit" loading={loading}>
+          Login
         </Button>
         <Message text={error} type="error" />
       </form>
-      <AuthLinks
-        links={[
-          { href: "/signup", label: "Create account" },
-          { href: "/forgot-password", label: "Forgot password?" },
-        ]}
-      />
+      <div className="neo-divider" role="separator" aria-hidden="true" />
+      <p className="text-center text-sm text-[var(--text-muted)]">
+        Don&apos;t have an account?{" "}
+        <a href="/signup" className="neo-link">
+          Create account
+        </a>
+      </p>
     </AuthPage>
   );
 }

@@ -51,8 +51,8 @@ export function ResetPasswordForm({ email }) {
         <FormField label="Confirm password" htmlFor="confirmPassword">
           <Input id="confirmPassword" name="confirmPassword" type="password" required autoComplete="new-password" minLength={8} />
         </FormField>
-        <Button type="submit" disabled={loading}>
-          {loading ? "Resetting..." : "Reset password"}
+        <Button type="submit" loading={loading}>
+          Reset password
         </Button>
         <Message text={error} type="error" />
       </form>

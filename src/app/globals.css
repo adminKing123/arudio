@@ -15,24 +15,45 @@
   --radius-lg: 1.5rem;
   --radius-md: 1rem;
   --radius-pill: 9999px;
+  --bg-dot: #c5cdd8;
+  --bg-dot-size: 16px;
 }
 
 @theme inline {
   --color-background: var(--bg);
   --color-foreground: var(--text);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-jakarta);
+  --font-display: var(--font-outfit);
+  --font-mono: var(--font-jetbrains-mono);
 }
 
 body {
-  background: var(--bg);
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--bg);
+  background-image: radial-gradient(
+    circle,
+    var(--bg-dot) 1px,
+    transparent 1px
+  );
+  background-size: var(--bg-dot-size) var(--bg-dot-size);
   color: var(--text);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-jakarta), system-ui, sans-serif;
+  font-feature-settings: "kern" 1, "liga" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-outfit), var(--font-jakarta), system-ui, sans-serif;
+  letter-spacing: -0.02em;
 }
 
 @layer components {
   .neo-surface {
-    background: var(--surface);
+    background: transparent;
   }
 
   .neo-card {
@@ -97,6 +118,28 @@ body {
     cursor: not-allowed;
   }
 
+  .neo-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: neo-spin 0.65s linear infinite;
+    flex-shrink: 0;
+  }
+
+  .neo-spinner-md {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  @keyframes neo-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
   .neo-btn-primary {
     background: var(--accent);
     color: white;
@@ -141,6 +184,23 @@ body {
 
   .neo-link:hover {
     text-decoration: underline;
+  }
+
+  .neo-divider {
+    margin: 1.75rem 0;
+    height: 1px;
+    border: none;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--shadow-dark) 35%, transparent) 15%,
+      color-mix(in srgb, var(--shadow-light) 90%, white) 50%,
+      color-mix(in srgb, var(--shadow-dark) 35%, transparent) 85%,
+      transparent 100%
+    );
+    box-shadow:
+      0 1px 0 color-mix(in srgb, var(--shadow-light) 60%, transparent),
+      0 -1px 0 color-mix(in srgb, var(--shadow-dark) 20%, transparent);
   }
 
   .neo-sidebar-icon {

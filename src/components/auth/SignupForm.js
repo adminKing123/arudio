@@ -63,8 +63,8 @@ export function SignupForm() {
         <FormField label="Password" htmlFor="password">
           <Input id="password" name="password" type="password" required autoComplete="new-password" minLength={8} />
         </FormField>
-        <Button type="submit" disabled={loading}>
-          {loading ? "Creating account..." : "Sign up"}
+        <Button type="submit" loading={loading}>
+          Sign up
         </Button>
         <Message text={error} type="error" />
       </form>

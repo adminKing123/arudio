@@ -46,8 +46,8 @@ export function ForgotPasswordForm() {
         <FormField label="Email" htmlFor="email">
           <Input id="email" name="email" type="email" required autoComplete="email" />
         </FormField>
-        <Button type="submit" disabled={loading}>
-          {loading ? "Sending OTP..." : "Send OTP"}
+        <Button type="submit" loading={loading}>
+          Send OTP
         </Button>
         <Message text={error} type="error" />
       </form>
