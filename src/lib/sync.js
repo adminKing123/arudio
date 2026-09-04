@@ -1,19 +1,18 @@
-import { TABLE_NAMES, emptyDatabase } from "./db/schema.js";
+import { SYNC_TABLE_NAMES, emptyDatabase } from "./db/schema.js";
 import { db, getDatabaseState, getDatabaseSyncError } from "./db/index.js";
 
 /**
  * @param {unknown} payload
- * @returns {import('./db/schema.js').DatabaseSchema}
  */
 function normalizeRemotePayload(payload) {
   if (!payload || typeof payload !== "object") {
     throw new Error("Remote API returned invalid JSON payload.");
   }
 
-  /** @type {import('./db/schema.js').DatabaseSchema} */
-  const normalized = structuredClone(emptyDatabase);
+  /** @type {Record<string, unknown[]>} */
+  const normalized = {};
 
-  for (const table of TABLE_NAMES) {
+  for (const table of SYNC_TABLE_NAMES) {
     const rows = /** @type {Record<string, unknown>} */ (payload)[table];
 
     if (!Array.isArray(rows)) {
@@ -30,9 +29,7 @@ export async function syncDatabaseFromRemote() {
   const databaseState = getDatabaseState();
 
   if (!databaseState.valid) {
-    throw new Error(
-      databaseState.reason ?? getDatabaseSyncError(),
-    );
+    throw new Error(databaseState.reason ?? getDatabaseSyncError());
   }
 
   const remoteUrl = process.env.REMOTE_DB_JSON_URL;
@@ -57,7 +54,7 @@ export async function syncDatabaseFromRemote() {
   const payload = await response.json();
   const normalized = normalizeRemotePayload(payload);
 
-  await db.replace(normalized);
+  await db.replaceSyncData(normalized);
 
   return {
     syncedAt: new Date().toISOString(),

@@ -94,7 +94,21 @@ export function initializeDatabase() {
     const data = JSON.parse(raw);
 
     if (!isValidDatabaseSchema(data)) {
-      writeValidDatabase(filePath);
+      /** @type {Record<string, unknown>} */
+      const repaired = { ...structuredClone(emptyDatabase), ...data };
+
+      for (const table of TABLE_NAMES) {
+        if (!Array.isArray(repaired[table])) {
+          repaired[table] = [];
+        }
+      }
+
+      ensureDbDirectory(filePath);
+      fs.writeFileSync(
+        filePath,
+        `${JSON.stringify(repaired, null, 2)}\n`,
+        "utf-8",
+      );
 
       return {
         valid: true,

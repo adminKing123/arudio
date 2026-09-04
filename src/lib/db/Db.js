@@ -1,11 +1,17 @@
 import { JSONFilePreset } from "lowdb/node";
-import { emptyDatabase, TABLE_NAMES } from "./schema.js";
+import {
+  emptyDatabase,
+  SYNC_TABLE_NAMES,
+  TABLE_NAMES,
+} from "./schema.js";
 import { ensureDbDirectory, getDbFilePath } from "./paths.js";
 import { SongRepository } from "./models/Song.js";
 import { ArtistRepository } from "./models/Artist.js";
 import { AlbumRepository } from "./models/Album.js";
 import { ActorRepository } from "./models/Actor.js";
 import { LanguageRepository } from "./models/Language.js";
+import { UserRepository } from "./models/User.js";
+import { OtpRepository } from "./models/Otp.js";
 
 export class Db {
   /** @type {import('lowdb').Low<import('./schema.js').DatabaseSchema> | null} */
@@ -32,12 +38,20 @@ export class Db {
   /** @type {LanguageRepository} */
   language;
 
+  /** @type {UserRepository} */
+  user;
+
+  /** @type {OtpRepository} */
+  otp;
+
   constructor() {
     this.song = new SongRepository(this);
     this.artist = new ArtistRepository(this);
     this.album = new AlbumRepository(this);
     this.actor = new ActorRepository(this);
     this.language = new LanguageRepository(this);
+    this.user = new UserRepository(this);
+    this.otp = new OtpRepository(this);
   }
 
   static getFilePath() {
@@ -46,6 +60,11 @@ export class Db {
 
   static ensureDataDirectory() {
     ensureDbDirectory();
+  }
+
+  ensureLocalTables() {
+    this.data.users = Array.isArray(this.data.users) ? this.data.users : [];
+    this.data.otps = Array.isArray(this.data.otps) ? this.data.otps : [];
   }
 
   async connect() {
@@ -64,10 +83,12 @@ export class Db {
     const lowdb = await this.connect();
     await lowdb.read();
     this.data = lowdb.data;
+    this.ensureLocalTables();
   }
 
   async write() {
     const lowdb = await this.connect();
+    this.ensureLocalTables();
     lowdb.data = structuredClone(this.data);
     await lowdb.write();
   }
@@ -82,17 +103,21 @@ export class Db {
   }
 
   /**
-   * @param {import('./schema.js').DatabaseSchema} nextData
+   * Replace only synced music tables. Users and OTPs are preserved.
+   * @param {Record<string, unknown[]>} syncData
    */
-  async replace(nextData) {
-    for (const table of TABLE_NAMES) {
-      if (!Array.isArray(nextData[table])) {
+  async replaceSyncData(syncData) {
+    await this.ensureReady();
+
+    for (const table of SYNC_TABLE_NAMES) {
+      if (!Array.isArray(syncData[table])) {
         throw new Error(`Invalid database payload: missing table "${table}".`);
       }
+
+      this.data[table] = structuredClone(syncData[table]);
     }
 
-    this.data = structuredClone(nextData);
-    await this.connect();
+    this.ensureLocalTables();
     await this.write();
     this.#ready = Promise.resolve();
     return this;
@@ -107,6 +132,9 @@ export class Db {
       languages: await this.language.count(),
       albums: await this.album.count(),
       songs: await this.song.count(),
+      users: this.data.users.length,
     };
   }
 }
+
+export { TABLE_NAMES, SYNC_TABLE_NAMES };

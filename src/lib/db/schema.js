@@ -35,11 +35,39 @@
 
 /**
  * @typedef {{
+ *   id: number,
+ *   email: string,
+ *   passwordHash: string,
+ *   name: string,
+ *   username: string,
+ *   phone: string,
+ *   verified: boolean,
+ *   createdAt: string,
+ *   updatedAt: string
+ * }} User
+ */
+
+/**
+ * @typedef {{
+ *   id: number,
+ *   email: string,
+ *   code: string,
+ *   type: "signup" | "password_reset",
+ *   expiresAt: string,
+ *   used: boolean,
+ *   createdAt: string
+ * }} Otp
+ */
+
+/**
+ * @typedef {{
  *   actors: Actor[],
  *   artists: Artist[],
  *   languages: Language[],
  *   albums: Album[],
- *   songs: Song[]
+ *   songs: Song[],
+ *   users: User[],
+ *   otps: Otp[]
  * }} DatabaseSchema
  */
 
@@ -50,12 +78,17 @@ export const emptyDatabase = {
   languages: [],
   albums: [],
   songs: [],
+  users: [],
+  otps: [],
 };
 
-export const TABLE_NAMES = [
+/** Replaced by remote sync — users and otps are always preserved locally. */
+export const SYNC_TABLE_NAMES = [
   "actors",
   "artists",
   "languages",
   "albums",
   "songs",
 ];
+
+export const TABLE_NAMES = [...SYNC_TABLE_NAMES, "users", "otps"];
